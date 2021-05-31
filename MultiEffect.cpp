@@ -7,6 +7,7 @@
 #define DEL 1
 #define COR 2
 #define PHR 3
+#define OCT 4
 
 
 
@@ -21,6 +22,7 @@ static Chorus                                    crs;
 static Chorus                                    crs2;
 static Chorus                                    crs3;
 static Chorus                                    crs4;
+static PitchShifter                              pst;
 
 static Phaser                                    psr;
 static Phaser                                    psr2;
@@ -32,6 +34,7 @@ static DelayLine<float, MAX_DELAY> DSY_SDRAM_BSS delr2;
 static Parameter deltime;
 int   mode = CHRDEL;
 int   numstages;
+uint32_t octDelSize;
 
 float currentDelay, feedback, delayTarget, freq, freqtarget, lfotarget, lfo;
 
@@ -49,6 +52,8 @@ void GetDelaySample(float &outl, float &outr, float inl, float inr);
 void GetChorusSample(float &outl, float &outr, float inl, float inr);
 
 void GetPhaserSample(float &outl, float &outr, float inl, float inr);
+
+void GetOctaveSample(float &outl, float &outr, float inl, float inr);
 
 
 void AudioCallback(float *in, float *out, size_t size)
@@ -69,6 +74,7 @@ void AudioCallback(float *in, float *out, size_t size)
             case DEL: GetDelaySample(outl, outr, inl, inr); break;
             case COR: GetChorusSample(outl, outr, inl, inr); break;
             case PHR: GetPhaserSample(outl, outr, inl, inr); break;
+            case OCT: GetOctaveSample(outl, outr, inl, inr); break;
             default: outl = outr = 0;
         }
 
@@ -100,6 +106,7 @@ int main(void)
     crs4.Init(sample_rate);
     psr.Init(sample_rate);
     psr2.Init(sample_rate);
+    pst.Init(sample_rate);
 
 
     //set parameters
@@ -132,6 +139,13 @@ int main(void)
     psr2.SetPoles(numstages);
     freqtarget = freq = 0.f;
     lfotarget = lfo = 0.f;
+
+    //pitchshifter parameters
+    pst.SetTransposition(12.0f);
+    /***
+    sets delay size changing the timbre of the pitchshifting  ***/
+    octDelSize = 256;
+    pst.SetDelSize(octDelSize);
 
 
     // start callback
@@ -203,6 +217,10 @@ void UpdateKnobs(float &k1, float &k2)
             lfo = k2;
 
             break;
+        case OCT:
+            drywet = k1;
+            break;
+
 
 
            
@@ -212,7 +230,7 @@ void UpdateKnobs(float &k1, float &k2)
 void UpdateEncoder()
 {
     mode = mode + pod.encoder.Increment();
-    mode = (mode % 4 + 4) % 4;
+    mode = (mode % 5 + 5) % 5;
 }
 
 void UpdateLeds(float k1, float k2)
@@ -220,7 +238,7 @@ void UpdateLeds(float k1, float k2)
     pod.led1.Set(
         k1 * (mode == 2), k1 * (mode == 1), k1 * (mode == 0 || mode == 3));
     pod.led2.Set(
-        k2 * (mode == 3), k2 * (mode == 2), k2 * (mode == 0 || mode == 4));
+        k2 * (mode == 3), k2 * (mode == 2 || mode == 4), k2 * (mode == 0 || mode == 4));
 
     pod.UpdateLeds();
 }
@@ -329,6 +347,14 @@ void GetPhaserSample(float &outl, float &outr, float inl, float inr){
            // outr =  psr.Process(inr * drywet) + inr*((1.0f-drywet));
             
 }
+
+            void GetOctaveSample(float &outl, float &outr, float inl, float inr){
+
+            outl = crs.GetLeft() * drywet*0.2 + pst.Process(inl) * drywet + inl * (1.f - drywet);
+            outr = crs.GetRight() * drywet*0.2 + pst.Process(inr) * drywet + inr * (1.f - drywet);
+
+
+            }
 
 
 
