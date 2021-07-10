@@ -166,16 +166,22 @@ void UpdateKnobs(float &k1, float &k2)
         case CHRDEL:
             drywet = k1;
             delayTarget = deltime.Process();
-            feedback    = k2;
+            feedback    = k1*0.2 + k2*0.1; 
+            /**
             crs.SetLfoDepth(0.15f+k2*0.35f);
             crs2.SetLfoDepth(0.2f+k2*0.26f);
             crs3.SetLfoDepth(0.23f+k2*0.37f);
             crs4.SetLfoDepth(0.25f+k2*0.29f);
+            **/
+            crs.SetLfoDepth(4.0f + k1*1.1f );
+            crs2.SetLfoDepth(5.0f + k1*1.2f);
+            crs3.SetLfoDepth(6.0f + k1*0.9f);
+            crs4.SetLfoDepth(7.0f + k1*0.8f);
             /**Set lfo frequency Frequency in Hz */
-            crs.SetLfoFreq(1.0f+k2*1.6f);
-            crs2.SetLfoFreq(1.5f+k2*1.7f);
-            crs3.SetLfoFreq(1.2f+ k2*2.3f);
-            crs4.SetLfoFreq(1.4f + k2*2.4f);
+            crs.SetLfoFreq(k2*0.6f);
+            crs2.SetLfoFreq(k2*0.7f);
+            crs3.SetLfoFreq(k2*0.8f); 
+            crs4.SetLfoFreq(k2*0.9f); 
             
             break;
             // a stereo delay without chorus 
@@ -187,15 +193,16 @@ void UpdateKnobs(float &k1, float &k2)
         case COR:
             drywet = k1;
             /** How much to modulate the delay by Works 0-1.    */
-            crs.SetLfoDepth(0.15f+k2*0.35f);
-            crs2.SetLfoDepth(0.2f+k2*0.26f);
-            crs3.SetLfoDepth(0.23f+k2*0.37f);
-            crs4.SetLfoDepth(0.25f+k2*0.29f);
+            crs.SetLfoDepth(4.0f + k1*1.1f );
+            crs2.SetLfoDepth(5.0f + k1*1.2f);
+            crs3.SetLfoDepth(6.0f + k1*0.9f);
+            crs4.SetLfoDepth(7.0f + k1*0.8f);
             /**Set lfo frequency Frequency in Hz */
-            crs.SetLfoFreq(1.0f+k2*1.6f);
-            crs2.SetLfoFreq(1.5f+k2*1.7f);
-            crs3.SetLfoFreq(1.2f+ k2*2.3f);
-            crs4.SetLfoFreq(1.4f + k2*2.4f);
+            crs.SetLfoFreq(k2*0.6f);
+            crs2.SetLfoFreq(k2*0.7f);
+            crs3.SetLfoFreq(k2*0.8f); 
+            crs4.SetLfoFreq(k2*0.9f); 
+
             break;
         case PHR:
             //ap_freq Frequency in Hz
@@ -281,8 +288,8 @@ void GetReverbSample(float &outl, float &outr, float inl, float inr)
     crs4.Process(inr);
     
     
-    outl = crs.GetLeft() * drywet   + crs3.GetLeft() * drywet+  inl * (1.2f - drywet) + (feedback * outl) + ((1.0f - feedback) * inl);;
-    outr =  crs2.GetRight() * drywet + + crs4.GetRight() * drywet + inr * (1.2f - drywet) + (feedback * outr) + ((1.0f - feedback) * inr);
+    outl = crs.GetLeft() * drywet *2.0f  + crs3.GetLeft() * drywet*2.0f+  inl * (0.5f - drywet) + (feedback * outl*drywet*0.6f) + ((1.0f - feedback) * inl*drywet);;
+    outr =  crs2.GetRight() * drywet*2.0f + + crs4.GetRight() * drywet*2.0f + inr * (0.5f - drywet) + (feedback * outr*drywet*0.6f) + ((1.0f - feedback) * inr*drywet);
 
 }
 // process audio adding in delays 
@@ -316,8 +323,8 @@ void GetChorusSample(float &outl, float &outr, float inl, float inr)
     crs4.Process(inr);
     
     
-    outl = crs.GetLeft() * drywet *1.5  + crs3.GetLeft() * drywet*1.5 +  inl * (1.5f - drywet);
-    outr =  crs2.GetRight() * drywet*1.5 + + crs4.GetRight() * drywet*1.5 + inr * (1.5f - drywet);
+    outl = crs.GetLeft() * drywet *2.5  + crs3.GetLeft() * drywet*2.5 +  inl * (0.5f - drywet);
+    outr =  crs2.GetRight() * drywet*2.5 + + crs4.GetRight() * drywet*2.5 + inr * (0.5f - drywet);
 }
 
 void GetPhaserSample(float &outl, float &outr, float inl, float inr){
@@ -355,6 +362,5 @@ void GetPhaserSample(float &outl, float &outr, float inl, float inr){
 
 
             }
-
 
 
