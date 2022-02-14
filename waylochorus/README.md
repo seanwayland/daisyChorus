@@ -1,27 +1,13 @@
-# Multi Effect
+Emulation of UD STOMP sounds for electrosmith daisy ( pod ) 
 
-## Author
 
-Ben Sergentanis
+CHRDEL - chorus plus delay 
+DEL - delay only 
+COR - chorus only 
+PHR - phasor
+OCT - octave 
 
-## Description
-Simple effects for incoming audio. Includes reverb, delay, and downsampling.
-
-[Source Code](https://github.com/electro-smith/DaisyExamples/tree/master/pod/MultiEffect)
-
-## Controls
-| Control | Description | Comment |
-| --- | --- | --- |
-| Encoder | Mode Select | |
-| LED | Mode Indicate | 1: Blue, 2: Green, 3: Purple | 
-| Audio In | Effect In | |
-| Audio Out | Effect Out | |
-
-| Control | Mode 1: Reverb | Mode 2: Delay | Mode 3: Bitcrush / Lowpass
-| --- | --- | --- | --- |
-| LED Color | Blue | Green | Purple | 
-| Knob 1 | Dry/wet | Delay time | LPF cutoff |
-| Knob 2 | Reverb time | Feedback | Downsample |
+One know controls lots of parameters like mid rate/ depth simultaneously . The other knob adjusts wet/dry 
 
 
 
