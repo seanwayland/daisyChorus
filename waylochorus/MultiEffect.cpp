@@ -1,5 +1,6 @@
 #include "daisysp.h"
 #include "daisy_pod.h"
+#include <vector>
 
 // Set max delay time to 0.75 of samplerate.
 #define MAX_DELAY static_cast<size_t>(48000 * 2.5f)
@@ -56,7 +57,9 @@ float mLFOphaseTwo= 0;
 float mLFOphaseThree= 0;
 float mLFOphaseFour= 0;
 
-float *mCircularBufferLeft= new float[SR];
+//float *mCircularBufferLeft= new float[SR];
+std::vector <float> mCircularBufferLeft (SR);
+
 float *mCircularBufferRight= new float[SR];
 float *mCircularBufferLeftTwo =new float[SR];
 float *mCircularBufferRightTwo = new float[SR];
@@ -611,7 +614,7 @@ void GetWayloChorusSample(float &outl, float &outr, float inl, float inr){
         
 
 
-        outl = inl * (1.f - lfoOutMapped*10);
+        //outl = inl * (1.f - lfoOutMapped*10);
         outr =  inr * (1.f - lfoOutMappedTwo*10);
 
                 //         // increment the buffer write head
@@ -622,7 +625,7 @@ void GetWayloChorusSample(float &outl, float &outr, float inl, float inr){
 
         
         // wrap around if needed
-        if (mCircularBufferWriteHead == 5000){
+        if (mCircularBufferWriteHead == SR-1){
             mCircularBufferWriteHead = 0;
         }
         if (mCircularBufferWriteHeadTwo == SR){
